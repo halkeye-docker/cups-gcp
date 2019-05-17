@@ -4,7 +4,7 @@ build: ## Make the docker image
 	docker build -t halkeye/cups .
 
 run: ## Run the docker image
-	docker run -it --rm --name cups halkeye/cups
+	docker run -it --rm --name cups -p 631:631 -v "$$(realpath config):/config" halkeye/cups
 
 .PHONY: help
 help:

@@ -15,10 +15,10 @@ RUN apt-get update \
 
 RUN mkdir /config && \
     ln -s /config/printers.conf /etc/cups/printers.conf && \
-    /etc/init.d/cups start && cupsctl --remote-admin && \
+    /etc/init.d/cups start && cupsctl --remote-admin --remote-any --share-printers --user-cancel-any && \
     sed -i 's/Listen localhost:631/Listen *:631/g' /etc/cups/cupsd.conf && \
     sed -i 's/DefaultAuthType Basic/DefaultAuthType None/g' /etc/cups/cupsd.conf && \
-    sed -i 's/LogLevel warn/LogLevel info/g' /etc/cups/cupsd.conf && \
+    sed -i 's/LogLevel warn/LogLevel warn/g' /etc/cups/cupsd.conf && \
     echo "ServerAlias *" >> /etc/cups/cupsd.conf && \
     sed -i 's/AccessLog .*/AccessLog stderr/g' /etc/cups/cups-files.conf && \
     sed -i 's/ErrorLog .*/ErrorLog stderr/g' /etc/cups/cups-files.conf && \
