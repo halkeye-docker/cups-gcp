@@ -1,10 +1,10 @@
 .DEFAULT_GOAL := help
 
 build: ## Make the docker image
-	docker build -t halkeye/cups .
+	docker build -t halkeye/cups-gcp .
 
 run: ## Run the docker image
-	docker run -it --rm --name cups -p 631:631 -v "$$(realpath config):/config" halkeye/cups
+	docker run -it --rm --name cups -p 631:631 -v "$$(realpath config):/config" halkeye/cups-gcp
 
 .PHONY: help
 help:

@@ -1,12 +1,21 @@
+FROM golang AS builder
+
+RUN apt-get update && apt-get install -y git bzr gcc build-essential libavahi-core-dev libcups2-dev libavahi-client-dev
+
+RUN go get github.com/google/cloud-print-connector/gcp-cups-connector
+
 FROM ubuntu:18.04
 LABEL maintainer "Gavin Mogan <docker@gavinmogan.com>"
 
 EXPOSE 631
+ENV TINI_VERSION v0.18.0
 
 RUN apt-get update \
       && apt-get install --no-install-recommends -y  -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
       cups \
       avahi-daemon \
+      supervisor \
+      ca-certificates \
       && rm -rf /var/lib/apt/lists/* && \
       # Remove backends that don't make sense for container
       rm /usr/lib/cups/backend/parallel && \
@@ -24,5 +33,8 @@ RUN mkdir /config && \
     sed -i 's/ErrorLog .*/ErrorLog stderr/g' /etc/cups/cups-files.conf && \
     sed -i 's/PageLog .*/PageLog stderr/g' /etc/cups/cups-files.conf
 
-CMD ["/bin/sh", "-c", "/usr/sbin/cupsd -f"]
+COPY --from=builder /go/bin/gcp-cups-connector /usr/bin/gcp-cups-connector
+COPY ./supervisord.conf /etc/supervisord.conf
 
+#CMD ["/bin/sh", "-c", "/usr/sbin/cupsd -f"]
+CMD ["supervisord","-c","/etc/supervisord.conf"]
