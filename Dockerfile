@@ -4,17 +4,20 @@ RUN apt-get update && apt-get install -y git bzr gcc build-essential libavahi-co
 
 RUN go get github.com/google/cloud-print-connector/gcp-cups-connector
 
-FROM ubuntu:18.04
+FROM ubuntu:19.04
 LABEL maintainer "Gavin Mogan <docker@gavinmogan.com>"
 
 EXPOSE 631
-ENV TINI_VERSION v0.18.0
 
 RUN apt-get update \
       && apt-get install --no-install-recommends -y  -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
       cups \
       avahi-daemon \
       supervisor \
+      brother-cups-wrapper-common \
+      brother-cups-wrapper-extra \
+      brother-cups-wrapper-laser \
+      brother-cups-wrapper-laser1 \
       ca-certificates \
       && rm -rf /var/lib/apt/lists/* && \
       # Remove backends that don't make sense for container
